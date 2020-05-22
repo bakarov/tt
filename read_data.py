@@ -3,6 +3,8 @@ from typing import List, Tuple, Dict
 from collections import defaultdict, Counter
 from random import choice
 from pandas import DataFrame, read_csv
+from git import Git
+from subprocess import Popen, PIPE
 
 def read_file(filename: str) -> List:
     with open(filename, 'r', encoding='utf-8') as f:
@@ -232,4 +234,11 @@ def make_submission(test_tagged: Dict, save_dir: str='recognition_results'):
             makedirs(save_dir)
 
 if __name__ == '__main__':
+    try:
+        Git('.').clone('https://github.com/dialogue-evaluation/factRuEval-2016.git')
+    except:
+        pass 
     make_submission(generate_random_tags(*process_data()))
+    command = 'cd factRuEval-2016/scripts/ && python t1_eval.py -t ../../recognition_results -s ../testset/ -l'
+    result = Popen([command], stdin=PIPE, stdout=PIPE)
+    print(result)
